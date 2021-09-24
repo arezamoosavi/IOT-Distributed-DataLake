@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+airflow/dags/raw_data/batch
+.storage/minio
+*.jar
+*.csv
+*.db
+superset/.setup-complete
