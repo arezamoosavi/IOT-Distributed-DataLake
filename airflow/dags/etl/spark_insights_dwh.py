@@ -22,7 +22,7 @@ logger.setLevel(log4jLogger.Level.INFO)
 resultdf = spark.sql(
     """SELECT ds, COUNT(ds) AS event_counts FROM delta_events group by ds""")
 
-resultdf.show(2)
+resultdf = resultdf.withColumn("ds", F.to_date(F.col("ds"), 'yyyy-MM-dd'))
 
 write_mariadb(resultdf, "mariadb", "root", "root", "dwh", "daily_events")
 
