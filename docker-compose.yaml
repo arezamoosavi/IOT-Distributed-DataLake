@@ -11,7 +11,7 @@ services:
       - 8000:8000
     volumes:
       - ./airflow/dags:/opt/airflow/dags
-    command: sleep infinity
+    # command: sleep infinity
 
   spark-master:
     build: ./spark
