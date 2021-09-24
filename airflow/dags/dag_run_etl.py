@@ -21,7 +21,7 @@ dag = airflow.DAG(
 )
 
 task_spark_etl = BashOperator(
-    task_id="spark_initial_load",
+    task_id="deltaTable_initial_load",
     bash_command="spark-submit "
     "--master local "
     "--deploy-mode client "
