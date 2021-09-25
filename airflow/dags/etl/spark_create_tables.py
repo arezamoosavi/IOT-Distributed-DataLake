@@ -21,7 +21,7 @@ delta_table.generate("symlink_format_manifest")
 
 sql_delta_table = """CREATE EXTERNAL TABLE IF NOT EXISTS hive_events
 (id string, device_id string, event_code string, event_detail string,
-time timestamp, group_id string, desc string, type string, ds string)
+created timestamp, group_id string, description string, event_type string, ds string)
 PARTITIONED BY (ds)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.SymlinkTextInputFormat'
