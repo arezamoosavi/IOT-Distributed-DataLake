@@ -25,9 +25,10 @@ task_initial_dag_spark_etl = BashOperator(
     task_id="deltaTable_initial_load",
     bash_command="""spark-submit --master spark://spark-master:7077 \
         --deploy-mode client --driver-memory 2g --num-executors 2 \
-            --packages io.delta:delta-core_2.12:1.0.0 --py-files dags/utils/common.py \
-                --jars dags/jars/aws-java-sdk-1.11.534.jar,dags/jars/aws-java-sdk-bundle-1.11.874.jar,dags/jars/delta-core_2.12-1.0.0.jar,dags/jars/hadoop-aws-3.2.0.jar,dags/jars/mariadb-java-client-2.7.4.jar \
-                    dags/etl/spark_initial_load.py""",
+            --packages io.delta:delta-core_2.12:1.0.0 --py-files /opt/airflow/dags/utils/common.py \
+                --jars /opt/airflow/dags/jars/aws-java-sdk-1.11.534.jar,/opt/airflow/dags/jars/aws-java-sdk-bundle-1.11.874.jar,/opt/airflow/dags/jars/delta-core_2.12-1.0.0.jar,/opt/airflow/dags/jars/hadoop-aws-3.2.0.jar,/opt/airflow/dags/jars/mariadb-java-client-2.7.4.jar \
+                    /opt/airflow/dags/etl/spark_initial_load.py s3a://datalake/batch/0/*.json \
+                        s3a://datalake/deltatables/events/""",
     dag=initial_dag,
 )
 
@@ -35,9 +36,9 @@ task_initial_dag_hive_tables = BashOperator(
     task_id="deltaTable_hive_table",
     bash_command="""spark-submit --master spark://spark-master:7077 \
         --deploy-mode client --driver-memory 2g --num-executors 2 \
-            --packages io.delta:delta-core_2.12:1.0.0 --py-files dags/utils/common.py \
-                --jars dags/jars/aws-java-sdk-1.11.534.jar,dags/jars/aws-java-sdk-bundle-1.11.874.jar,dags/jars/delta-core_2.12-1.0.0.jar,dags/jars/hadoop-aws-3.2.0.jar,dags/jars/mariadb-java-client-2.7.4.jar \
-                    dags/etl/spark_create_tables.py""",
+            --packages io.delta:delta-core_2.12:1.0.0 --py-files /opt/airflow/dags/utils/common.py \
+                --jars /opt/airflow/dags/jars/aws-java-sdk-1.11.534.jar,/opt/airflow/dags/jars/aws-java-sdk-bundle-1.11.874.jar,/opt/airflow/dags/jars/delta-core_2.12-1.0.0.jar,/opt/airflow/dags/jars/hadoop-aws-3.2.0.jar,/opt/airflow/dags/jars/mariadb-java-client-2.7.4.jar \
+                    /opt/airflow/dags/etl/spark_create_tables.py""",
     dag=initial_dag,
 )
 
@@ -56,8 +57,9 @@ task_daily_dag_spark_etl = BashOperator(
     bash_command="""spark-submit --master spark://spark-master:7077 \
         --deploy-mode client --driver-memory 2g --num-executors 2 \
             --packages io.delta:delta-core_2.12:1.0.0 --py-files dags/utils/common.py \
-                --jars dags/jars/aws-java-sdk-1.11.534.jar,dags/jars/aws-java-sdk-bundle-1.11.874.jar,dags/jars/delta-core_2.12-1.0.0.jar,dags/jars/hadoop-aws-3.2.0.jar,dags/jars/mariadb-java-client-2.7.4.jar \
-                    dags/etl/spark_daily.py""",
+                --jars /opt/airflow/dags/jars/aws-java-sdk-1.11.534.jar,/opt/airflow/dags/jars/aws-java-sdk-bundle-1.11.874.jar,/opt/airflow/dags/jars/delta-core_2.12-1.0.0.jar,/opt/airflow/dags/jars/hadoop-aws-3.2.0.jar,/opt/airflow/dags/jars/mariadb-java-client-2.7.4.jar \
+                    /opt/airflow/dags/etl/spark_daily.py s3a://datalake/batch/*/*.json \
+                        s3a://datalake/deltatables/events/""",
     dag=daily_dag,
 )
 

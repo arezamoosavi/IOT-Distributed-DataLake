@@ -14,13 +14,27 @@ log4jLogger = spark._jvm.org.apache.log4j
 logger = log4jLogger.LogManager.getLogger("LOGGER")
 logger.setLevel(log4jLogger.Level.INFO)
 
-sdf = spark.read.json("s3a://datalake/batch/1/*.json")
-sdf = events_transformations(sdf)
-sdf.printSchema()
 
-sdf.write.format("delta").mode("append").option("mergeSchema", "true").partitionBy(
-    "ds").save('s3a://datalake/deltatables/events/')
+def create_initial_load(input_path="s3a://datalake/batch/0/*.json",
+                        output_path="s3a://datalake/deltatables/events/", **kwargs):
 
-write_mariadb(sdf, "mariadb", "root", "root", "dwh", "main_events")
+    sdf = spark.read.json(input_path)
+    sdf = events_transformations(sdf)
+    sdf.printSchema()
 
-spark.stop()
+    sdf.write.format("delta").mode("append").option("mergeSchema", "true").partitionBy(
+        "ds").save(output_path)
+
+    write_mariadb(sdf, "mariadb", "root", "root", "dwh", "main_events")
+
+    spark.stop()
+
+    return "Done"
+
+
+if __name__ == "__main__":
+
+    input_path = str(sys.argv[1])
+    output_path = str(sys.argv[2])
+
+    create_initial_load(input_path, output_path)

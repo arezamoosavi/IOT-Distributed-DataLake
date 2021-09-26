@@ -17,15 +17,26 @@ logger = log4jLogger.LogManager.getLogger("LOGGER")
 logger.setLevel(log4jLogger.Level.INFO)
 
 
-sdf = spark.read.json("s3a://datalake/batch/*/*.json")
-sdf = events_transformations(sdf)
-sdf.printSchema()
+def create_daily_app(input_path="s3a://datalake/batch/*/*.json",
+                     output_path="s3a://datalake/deltatables/events/", **kwargs):
 
-delta_table = DeltaTable.forPath(spark, "s3a://datalake/deltatables/events/")
-delta_table.alias("t1").merge(
-    sdf.alias("t2"),
-    "t1.id = t2.id").whenNotMatchedInsertAll().execute()
+    sdf = spark.read.json(input_path)
+    sdf = events_transformations(sdf)
+    sdf.printSchema()
 
-write_mariadb(sdf, "mariadb", "root", "root", "dwh", "main_events")
+    delta_table = DeltaTable.forPath(spark, output_path)
+    delta_table.alias("t1").merge(
+        sdf.alias("t2"),
+        "t1.id = t2.id").whenNotMatchedInsertAll().execute()
 
-spark.stop()
+    write_mariadb(sdf, "mariadb", "root", "root", "dwh", "main_events")
+
+    spark.stop()
+
+
+if __name__ == "__main__":
+
+    input_path = str(sys.argv[1])
+    output_path = str(sys.argv[2])
+
+    create_daily_app(input_path, output_path)
