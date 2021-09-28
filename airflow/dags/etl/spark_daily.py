@@ -27,7 +27,7 @@ def create_daily_app(input_path="s3a://datalake/batch/*/*.json",
     delta_table = DeltaTable.forPath(spark, output_path)
     delta_table.alias("t1").merge(
         sdf.alias("t2"),
-        "t1.id = t2.id").whenNotMatchedInsertAll().execute()
+        "t1.id = t2.id").whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
 
     write_mariadb(sdf, "mariadb", "root", "root", "dwh", "main_events")
 
